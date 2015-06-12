@@ -2,7 +2,7 @@
 """
 Created on Sun May  3 23:47:35 2015
 
-@author: Asus
+@author: Lysanne Rosaria
 """
 from Bio.Blast import NCBIWWW
 from Bio.Blast import NCBIXML
@@ -27,34 +27,33 @@ def main():
           
     for d1key, d1value in d1.items():
     	results = []
-	    bool = False
+    	bool = False
         if count < 102:
             blastnr =  ("\n\n\n------------blast number: "+str(count)+"-----------------------------------------------\n\n\n")
             idheader =  ("HEAD:      "+d1key)
             seqheader = ("SEQUENCE:  "+d1value+"\n\n")
             print (blastnr)
             print (idheader)
-            print (seqheader)			
-	        file.write("\n"+str(blastnr))
-	        file.write("\n"+str(idheader))
-	        file.write("\n"+str(seqheader))
+            print (seqheader)		
+            file.write("\n"+str(blastnr))
+            file.write("\n"+str(idheader))
+            file.write("\n"+str(seqheader))
             source_seq(bool, d1key, d1value)
             result = blast(d1value, file, d1key)
             results.append(result)
             boolean(result, d1key)
             if result == False:
-                noresult =  ("no results found for blast number "+str(count))
-        		print (noresult)
-        		count += 1
+                noresult =  ("no results found for blast number "+str(count))	
+                print (noresult)	
+                count += 1
             else:
                 endresults =  ("\n\n\n------------end of results blast number "+str(count)+"-------------------------------------")
-		        print (endresults)
-		        file.write("\n"+str(endresults))
+                print (endresults)
+                file.write("\n"+str(endresults))
                 count += 1
-		    bool = True
-	
+                bool = True
         else:
-            print ("done")
+  	    print ("done")
 
 def boolean(b, head):
      if b == False: 
@@ -93,8 +92,8 @@ def blast(seq, file, head):
     for blast_record in blast_records:
         desc = blast_record.descriptions
         if desc == []:
-    	    bool = False
-            else: 
+            bool = False
+        else: 
             numhits = len(desc)
         for alignment in blast_record.alignments:
             for hsp in alignment.hsps:
@@ -112,8 +111,8 @@ def blast(seq, file, head):
     
                     querylen = len(query)                 
                     qcov = float(identity) / float(querylen) * float(100)
-		            if numhits == None:
-		                numhits ="NULL"
+		    if numhits == None:
+		        numhits ="NULL"
                     print ("hithead:   ", hithead)
                     print ("length:    ", length)
                     print ("e-value:   ", evalue)
@@ -123,10 +122,9 @@ def blast(seq, file, head):
                     print (sub)
                     print ("identity:  ", identity)
                     print ("score:     ", score)
-		            print ("qcov:      ", qcov)
-		            print (len(query))
-                    # r =  ("sequence:  ", sequence,"\nlength:    ", length,"\ne-value:   ", evalue,"\ngaps:      ", gaps, "\n",query, "\n",match, "\n",sub, "\nidentity:  ", identity, "\nscore:     ", score)
-                    # print (r)
+                    print ("qcov:      ", qcov)
+                    print (len(query))
+                   
                     file.write("\n"+str(alignmentnr))
                     file.write("\n\n HITHEAD:  \n"+str(hithead))
     	            file.write("\n LENGTH:         "+str(length))
@@ -138,45 +136,27 @@ def blast(seq, file, head):
     	            file.write("\n IDENTITY%:      "+str(identity))
     	            file.write("\n SCORE:          "+str(score))
     	            file.write("\n NUMBER OF HITS: "+str(numhits)+"\n")
-#		        print ("\n***********************************************\n")
-#		        print ("head\n"+str(head))
-#		        print ("\n***********************************************\n")
-#		        print ("numhits\n"+str(numhits))
-#		        print ("\n***********************************************\n")
-#		        print ("sequence\n"+str(hithead))
-#		        print ("\n***********************************************\n")
-#		        print ("score\n"+str(score))
-#		        print ("\n***********************************************\n")
-#		        print ("qcov\n"+str(qcov)+" start: "+str(querys)+" end: "+str(querye)+" len: "+str(len(query)))
-#		        print ("\n***********************************************\n")
-#		        print ("evalue\n"+str(evalue))
-#		        print ("\n***********************************************\n")
-#		        print ("identity\n"+str(identity))
-# 		        print ("\n***********************************************\n")
+
 	            if c == 1:
-		           # print ("INSERT INTO `blast`.`BLAST_RESULT`(`amount-hits`, `result1-accession-code`, `result1-alignment-score`, `result1-query-coverage-percentage`, `result1-E-value`, `result1-ident-percentage`, `SOURCE_SEQ_seq-id`) VALUES ("+str(numhits)+", '"+str(hithead)+"', "+str(score)+", "+str(qcov)+", "+str(evalue)+", "+str(identity)+",'"+str(head)+"');")
-	                conn = mysql.connector.connect(host="ithurtswhenip.nl",user = "richard", password = "richard", db = "blast", port = 3307)
-		            cursor = conn.cursor()
-		            query1 = ("INSERT INTO `blast`.`BLAST_RESULT`(`amount-hits`, `result1-accession-code`, `result1-alignment-score`, `result1-query-coverage-percentage`, `result1-E-value`, `result1-ident-percentage`, `SOURCE_SEQ_seq-id`) VALUES ("+str(numhits)+", '"+str(hithead)+"', "+str(score)+", "+str(qcov)+", "+str(evalue)+", "+str(identity)+",'"+str(head)+"');")
-		           # rows = str(cursor.fetchall())	
-	               #  print (rows)
-		            cursor.execute(query1)
-		            print query1
-                    conn.commit()
-               	    cursor.close()
-		            conn.close()
- 		            c += 1
-		        else: 
-                    conn = mysql.connector.connect(host="ithurtswhenip.nl",user = "richard", password = "richard", db = "blast", port = 3307)
-                    cursor = conn.cursor()
-                    query2 = ("UPDATE `blast`.`BLAST_RESULT` SET `result"+str(c)+"-accession-code`='"+str(hithead)+"', `result"+str(c)+"-alignment-score`='"+str(score)+"', `result"+str(c)+"-query-coverage-percentage`='"+str(qcov)+"', `result"+str(c)+"-E-value`='"+str(evalue)+"', `result"+str(c)+"-ident-percentage`='"+str(identity)+"' WHERE `SOURCE_SEQ_seq-id`='"+str(head)+"';")
-                   # query2 = ("INSERT INTO `blast`.`BLAST_RESULT`(`result"+str(c)+"-accession-code`, `result"+str(c)+"-alignment-score`, `result"+str(c)+"-query-coverage-percentage`, `result"+str(c)+"-E-value`, `result"+str(c)+"-ident-percentage`) VALUES ('"+str(hithead)+"', "+str(score)+", "+str(qcov)+", "+str(evalue)+", "+str(identity)+");")               
-		            cursor.execute(query2)
-                    print (query2)
-                    conn.commit()
-                    cursor.close()
-                    conn.close()
-		            c += 1
+		        conn = mysql.connector.connect(host="ithurtswhenip.nl",user = "richard", password = "richard", db = "blast", port = 3307)
+		        cursor = conn.cursor()
+		        query1 = ("INSERT INTO `blast`.`BLAST_RESULT`(`amount-hits`, `result1-accession-code`, `result1-alignment-score`, `result1-query-coverage-percentage`, `result1-E-value`, `result1-ident-percentage`, `SOURCE_SEQ_seq-id`) VALUES ("+str(numhits)+", '"+str(hithead)+"', "+str(score)+", "+str(qcov)+", "+str(evalue)+", "+str(identity)+",'"+str(head)+"');")
+		        cursor.execute(query1)
+		        print query1
+                        conn.commit()
+               	        cursor.close()
+		        conn.close()
+ 		        c += 1
+		    else: 
+                        conn = mysql.connector.connect(host="ithurtswhenip.nl",user = "richard", password = "richard", db = "blast", port = 3307)
+                        cursor = conn.cursor()
+                        query2 = ("UPDATE `blast`.`BLAST_RESULT` SET `result"+str(c)+"-accession-code`='"+str(hithead)+"', `result"+str(c)+"-alignment-score`='"+str(score)+"', `result"+str(c)+"-query-coverage-percentage`='"+str(qcov)+"', `result"+str(c)+"-E-value`='"+str(evalue)+"', `result"+str(c)+"-ident-percentage`='"+str(identity)+"' WHERE `SOURCE_SEQ_seq-id`='"+str(head)+"';")
+                        cursor.execute(query2)
+                        print (query2)
+                        conn.commit()
+                        cursor.close()
+                        conn.close()
+		        c += 1
     return (bool)
 def dikt(i):
     dikt1 = {}
@@ -202,37 +182,4 @@ def dikt(i):
         
     return(dikt1, dikt2)
 	
-# def dikt(i):
-    # dikt = {}
-   
-    # for item in i:     
-        # lijst = item.split("\t")
-                
-        # head = ("@HWI"+lijst[0])
-        # seq = lijst[1]
-        # score = lijst[2]            
-        # dikt.update({head:seq})
-      
-        
-    # return(dikt)
-
-# def newfile(sequence, length, evalue, gaps, query, match, sub, identity, score):
-    # count = 0
-    # file = open("blast.txt", "a")
-    # if count = 0: 
-		# file.write("RESULTS\n")
-    # else:    
-		# file.write("\n SEQUENCE \n "+str(sequence))
-		# file.write("\n LENGTH:     "+str(length))
-		# file.write("\n E-VALUE:    "+str(evalue))
-		# file.write("\n GAPS:       "+str(gaps))
-		# file.write("\n"+str(query))
-		# file.write("\n"+str(match))
-		# file.write("\n"+str(sub))
-		# file.write("\n IDENTITY%:  "+str(identity))
-		# file.write("\n SCORE:      "+str(score)+"\n")
-
-# def update_progress(progress):
-#	print ('\r[{0}] {1}%'.format('#'*(progress/10), progress)
-
 main()
